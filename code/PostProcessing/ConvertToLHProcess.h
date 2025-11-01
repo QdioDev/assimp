@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -58,8 +58,9 @@ struct aiMesh;
 struct aiNodeAnim;
 struct aiNode;
 struct aiMaterial;
+struct aiCamera;
 
-namespace Assimp    {
+namespace Assimp {
 
 // -----------------------------------------------------------------------------------
 /** @brief The MakeLeftHandedProcess converts all imported data to a left-handed
@@ -71,7 +72,7 @@ namespace Assimp    {
  *
  * @note RH-LH and LH-RH is the same, so this class can be used for both
  */
-class MakeLeftHandedProcess : public BaseProcess {
+class MakeLeftHandedProcess final : public BaseProcess {
 public:
     MakeLeftHandedProcess() = default;
     ~MakeLeftHandedProcess() override = default;
@@ -109,6 +110,14 @@ protected:
      * @param pAnim The bone animation to transform
      */
     void ProcessAnimation( aiNodeAnim* pAnim);
+
+    // -------------------------------------------------------------------
+    /** Converts a single camera to left handed coordinates.
+     * The camera viewing direction is inverted by reflecting mLookAt
+     * across mPosition.
+     * @param pCam The camera to convert
+     */
+    void ProcessCamera( aiCamera* pCam);
 };
 
 
@@ -138,7 +147,7 @@ public:
 // ---------------------------------------------------------------------------
 /** Postprocessing step to flip the UV coordinate system of the import data
  */
-class FlipUVsProcess : public BaseProcess
+class FlipUVsProcess final : public BaseProcess
 {
     friend class Importer;
 
@@ -147,13 +156,13 @@ public:
     FlipUVsProcess();
 
     /** Destructor, private as well */
-    ~FlipUVsProcess();
+    ~FlipUVsProcess() override;
 
     // -------------------------------------------------------------------
-    bool IsActive( unsigned int pFlags) const;
+    bool IsActive( unsigned int pFlags) const override;
 
     // -------------------------------------------------------------------
-    void Execute( aiScene* pScene);
+    void Execute( aiScene* pScene) override;
 
 protected:
     void ProcessMesh( aiMesh* pMesh);

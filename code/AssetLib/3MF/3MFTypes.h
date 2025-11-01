@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -49,14 +49,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct aiMaterial;
 struct aiMesh;
 
-namespace Assimp {
-namespace D3MF {
+namespace Assimp:: D3MF {
 
 enum class ResourceType {
     RT_Object,
     RT_BaseMaterials,
     RT_EmbeddedTexture2D,
     RT_Texture2DGroup,
+    RT_ColorGroup,
     RT_Unknown
 }; // To be extended with other resource types (eg. material extension resources like Texture2d, Texture2dGroup...)
 
@@ -64,8 +64,7 @@ class Resource {
 public:
     int mId;
 
-    Resource(int id) :
-            mId(id) {
+    explicit Resource(int id) : mId(id) {
         // empty
     }
 
@@ -76,7 +75,7 @@ public:
     }
 };
 
-class EmbeddedTexture : public Resource {
+class EmbeddedTexture final : public Resource {
 public:
     std::string mPath;
     std::string mContentType;
@@ -84,50 +83,57 @@ public:
     std::string mTilestyleV;
     std::vector<char> mBuffer;
 
-    EmbeddedTexture(int id) :
-            Resource(id),
-            mPath(),
-            mContentType(),
-            mTilestyleU(),
-            mTilestyleV() {
+    explicit EmbeddedTexture(int id) : Resource(id) {
         // empty
     }
 
-    ~EmbeddedTexture() = default;
+    ~EmbeddedTexture() override = default;
 
     ResourceType getType() const override {
         return ResourceType::RT_EmbeddedTexture2D;
     }
 };
 
-class Texture2DGroup : public Resource {
+class Texture2DGroup final : public Resource {
 public:
     std::vector<aiVector2D> mTex2dCoords;
     int mTexId;
-    Texture2DGroup(int id) :
-            Resource(id),
-            mTexId(-1) {
+
+    explicit Texture2DGroup(int id) : Resource(id), mTexId(-1) {
         // empty
     }
 
-    ~Texture2DGroup() = default;
+    ~Texture2DGroup() override = default;
 
     ResourceType getType() const override {
         return ResourceType::RT_Texture2DGroup;
     }
 };
 
-class BaseMaterials : public Resource {
+class ColorGroup final : public Resource {
 public:
-    std::vector<unsigned int> mMaterialIndex;
+    std::vector<aiColor4D> mColors;
 
-    BaseMaterials(int id) :
-            Resource(id),
-            mMaterialIndex() {
+    explicit ColorGroup(int id) : Resource(id) {
         // empty
     }
 
-    ~BaseMaterials() = default;
+    ~ColorGroup() override = default;
+
+    ResourceType getType() const override {
+        return ResourceType::RT_ColorGroup;
+    }
+};
+
+class BaseMaterials final : public Resource {
+public:
+    std::vector<unsigned int> mMaterialIndex;
+
+    explicit BaseMaterials(int id) : Resource(id) {
+        // empty
+    }
+
+    ~BaseMaterials() override = default;
 
     ResourceType getType() const override {
         return ResourceType::RT_BaseMaterials;
@@ -139,25 +145,24 @@ struct Component {
     aiMatrix4x4 mTransformation;
 };
 
-class Object : public Resource {
+class Object final : public Resource {
 public:
-    std::vector<aiMesh *> mMeshes;
+    MeshArray mMeshes;
     std::vector<unsigned int> mMeshIndex;
     std::vector<Component> mComponents;
     std::string mName;
 
-    Object(int id) :
+    explicit Object(int id) :
             Resource(id),
             mName(std::string("Object_") + ai_to_string(id)) {
         // empty
     }
 
-    ~Object() = default;
+    ~Object() override = default;
 
     ResourceType getType() const override {
         return ResourceType::RT_Object;
     }
 };
 
-} // namespace D3MF
-} // namespace Assimp
+} // namespace Assimp::D3MF

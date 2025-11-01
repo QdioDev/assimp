@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
-
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -70,7 +69,7 @@ struct morphKeyData {
     std::vector<unsigned int> values;
     std::vector<float> weights;
 };
-typedef std::map<int64_t, morphKeyData*> morphAnimData;
+using morphAnimData = std::map<int64_t, morphKeyData*> ;
 
 namespace Assimp {
 namespace FBX {
@@ -81,8 +80,8 @@ using SkeletonBoneArray = std::vector<aiSkeletonBone *>;
 using SkeletonBoneToMesh = std::map<aiMesh*, SkeletonBoneArray*>;
 
 struct SkeletonBoneContainer {
-    std::vector<aiMesh *> MeshArray;
-    SkeletonBoneToMesh SkeletonBoneToMeshLookup;
+    MeshArray meshArray;
+    SkeletonBoneToMesh skeletonBoneToMeshLookup;
 };
 
 class Document;
@@ -134,22 +133,19 @@ private:
 
     // ------------------------------------------------------------------------------------------------
     // collect and assign child nodes
-    void ConvertNodes(uint64_t id, aiNode *parent, aiNode *root_node,
-                      const aiMatrix4x4 &globalTransform);
+    void ConvertNodes(uint64_t id, aiNode *parent, aiNode *root_node, const aiMatrix4x4& parent_transform = aiMatrix4x4());
 
     // ------------------------------------------------------------------------------------------------
     void ConvertLights(const Model& model, const std::string &orig_name );
 
     // ------------------------------------------------------------------------------------------------
-    void ConvertCameras(const Model& model, const std::string &orig_name,
-                        const aiMatrix4x4 &transform);
+    void ConvertCameras(const Model& model, const std::string &orig_name );
 
     // ------------------------------------------------------------------------------------------------
     void ConvertLight( const Light& light, const std::string &orig_name );
 
     // ------------------------------------------------------------------------------------------------
-    void ConvertCamera(const Camera& cam, const std::string &orig_name,
-                       aiMatrix4x4 transform);
+    void ConvertCamera( const Camera& cam, const std::string &orig_name );
 
     // ------------------------------------------------------------------------------------------------
     void GetUniqueName( const std::string &name, std::string& uniqueName );

@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
-
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -90,7 +89,7 @@ public:
      *  @param keep    true for keep configuration.
      */
 	void KeepHierarchy(bool keep) {
-		configKeepHierarchy = keep;
+		mConfigKeepHierarchy = keep;
 	}
 
 	// -------------------------------------------------------------------
@@ -98,7 +97,7 @@ public:
      *  @return ...
      */
 	bool IsHierarchyKept() const {
-		return configKeepHierarchy;
+		return mConfigKeepHierarchy;
 	}
 
 private:
@@ -108,7 +107,7 @@ private:
 
 	// -------------------------------------------------------------------
 	// Get a bitwise combination identifying the vertex format of a mesh
-	unsigned int GetMeshVFormat(aiMesh *pcMesh) const;
+	//unsigned int GetMeshVFormat(aiMesh *pcMesh) const;
 
 	// -------------------------------------------------------------------
 	// Count the number of vertices in the whole scene and a given
@@ -131,8 +130,8 @@ private:
 	// -------------------------------------------------------------------
 	// Get a list of all vertex formats that occur for a given material
 	// The output list contains duplicate elements
-	void GetVFormatList(const aiScene *pcScene, unsigned int iMat,
-			std::list<unsigned int> &aiOut) const;
+	/*void GetVFormatList(const aiScene *pcScene, unsigned int iMat,
+			std::list<unsigned int> &aiOut) const;*/
 
 	// -------------------------------------------------------------------
 	// Compute the absolute transformation matrices of each node
@@ -140,7 +139,7 @@ private:
 
 	// -------------------------------------------------------------------
 	// Simple routine to build meshes in worldspace, no further optimization
-	void BuildWCSMeshes(std::vector<aiMesh *> &out, aiMesh **in,
+	void BuildWCSMeshes(MeshArray &out, aiMesh **in,
 			unsigned int numIn, aiNode *node) const;
 
 	// -------------------------------------------------------------------
@@ -156,10 +155,10 @@ private:
 	void BuildMeshRefCountArray(const aiNode *nd, unsigned int *refs) const;
 
 	//! Configuration option: keep scene hierarchy as long as possible
-	bool configKeepHierarchy;
-	bool configNormalize;
-	bool configTransform;
-	aiMatrix4x4 configTransformation;
+	bool mConfigKeepHierarchy;
+	bool mConfigNormalize;
+	bool mConfigTransform;
+	aiMatrix4x4 mConfigTransformation;
 	bool mConfigPointCloud;
 };
 
